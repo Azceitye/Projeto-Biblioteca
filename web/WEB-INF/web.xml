@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <servlet>
+        <servlet-name>LivroLogic</servlet-name>
+        <servlet-class>logica.LivroLogic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExemplarLogic</servlet-name>
+        <servlet-class>logica.ExemplarLogic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EstanteLogic</servlet-name>
+        <servlet-class>logica.EstanteLogic</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LivroLogic</servlet-name>
+        <url-pattern>/LivroLogic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExemplarLogic</servlet-name>
+        <url-pattern>/ExemplarLogic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EstanteLogic</servlet-name>
+        <url-pattern>/EstanteLogic</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>
