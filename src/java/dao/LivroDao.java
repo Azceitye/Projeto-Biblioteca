@@ -37,7 +37,6 @@ public class LivroDao {
             long ID_Autor = new AutorDao(conn).create(livro.getAutor());
             long ID_Editora = new EditoraDao(conn).create(livro.getEditora());
             
-            System.out.println("Autor : " + ID_Autor + ", Editora : " + ID_Editora);
             
             stmt.setLong(1, ID_Editora);
             stmt.setLong(2, ID_Autor);
@@ -45,6 +44,7 @@ public class LivroDao {
             stmt.setString(4, livro.getSubtitulo());
             stmt.setString(5, livro.getEdicao());
             stmt.setDate(6, new Date(livro.getDatapublic().getTime()));
+            
             int row = stmt.executeUpdate();
             result = (row > 0);
             stmt.close();
@@ -106,11 +106,38 @@ public class LivroDao {
                 );
             }
             
+            stmt.close();
         } catch (SQLException ex) {
             Logger.getLogger(LivroDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return livro;
-    }   
+    }
+    
+    
+    public boolean update(Livro livro) {
+        String sql = "UPDATE `tb_livro` SET `titulo_LIVRO`=?,`subtitulo_LIVRO`=?,`edicao_LIVRO`=?,`tb_AUTOR_ID_AUTOR`=?,`tb_EDITOR_ID_EDITOR`=?,`datapublic_LIVRO`=? WHERE `ID_LIVRO` = ?";
+        boolean result=false;
+        
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            long ID_Autor = new AutorDao(conn).create(livro.getAutor());
+            long ID_Editora = new EditoraDao(conn).create(livro.getEditora());
+            
+            stmt.setString(1, livro.getTitulo());
+            stmt.setString(2, livro.getSubtitulo());
+            stmt.setString(3, livro.getEdicao());
+            stmt.setLong(4, ID_Editora);
+            stmt.setLong(5, ID_Autor);
+            stmt.setDate(6, new Date(livro.getDatapublic().getTime()));
+            stmt.setLong(7, livro.getID());
+            
+            stmt.execute();
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(LivroDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
+    }
     
 }

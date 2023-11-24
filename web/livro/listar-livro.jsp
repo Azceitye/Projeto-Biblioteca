@@ -35,7 +35,7 @@
                     <td>${livro.autor}</td>
                     <td>${livro.editora}</td>
                     <td><fmt:formatDate value="${livro.datapublic}" pattern="dd/MM/yyyy" /></td>
-                    <td><a href="#">EDITAR</a></td>
+                    <td><a href="alterar-livro.jsp?id=${livro.ID}">EDITAR</a></td>
                     <td><a href="#">EXCLUIR</a></td>
                     <td><a href="../exemplar/adicionar-exemplar.jsp?livro=${livro.ID}">Adicionar Exemplar</a></td>
                 </tr>        

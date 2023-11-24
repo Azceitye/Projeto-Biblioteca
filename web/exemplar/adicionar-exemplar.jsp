@@ -1,3 +1,8 @@
+<%@page import="java.util.List"%>
+<%@page import="model.bean.Estante"%>
+<%@page import="dao.EstanteDao"%>
+<%@page import="dao.ExemplarDao"%>
+<%@page import="java.sql.Connection"%>
 <%@page import="model.bean.Livro"%>
 <%@page import="model.ConnectionFactory"%>
 <%@page import="dao.LivroDao"%>
@@ -10,9 +15,12 @@
     </head>
     <body>
         <% 
-            LivroDao dao = new LivroDao(new ConnectionFactory().getConnection());
+            Connection conn = new ConnectionFactory().getConnection();
             long livroID = Long.parseLong(request.getParameter("livro"));
-            Livro livro = dao.buscar(livroID);
+            
+            Livro livro = new LivroDao(conn).buscar(livroID);
+            List<Estante> estantes = new EstanteDao(conn).list();
+            
             
             String livroNome = livro.getTitulo() + (livro.getSubtitulo() != null ? " : " + livro.getSubtitulo() : "");
             livroNome += " por " + livro.getAutor();
@@ -35,7 +43,9 @@
             <div>
                 <label for="estanteExemplar">Estante</label>
                 <select name="estanteExemplar">
-                    <option value="---">---</option>
+                    <%for(Estante estante : estantes) { %>
+                        <option value="<%=estante.getID()%>"><%=estante.getID()%></option>
+                    <% } %>
                 </select>
             </div>
             <!-- Status -->

@@ -31,23 +31,30 @@ public class LivroLogic extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
         try {
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
             LivroDao dao = new LivroDao(new ConnectionFactory().getConnection());
             Livro livro = null;
-            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
             boolean result = false;
             
+            // Parâmetros
+            Long ID = Long.valueOf(request.getParameter("livroID"));
+            String titulo = request.getParameter("livroTitulo");
+            String subtitulo = request.getParameter("livroSubtitulo");
+            String edicao = request.getParameter("livroEdicao");
+            String autor = request.getParameter("livroAutor");
+            String editora = request.getParameter("livroEditora");
+            String datapublic = request.getParameter("livroDatapublic");
+            // ---
+                        
             switch(action) {
-                case "create" -> {
-                    String titulo = request.getParameter("livroTitulo");
-                    String subtitulo = request.getParameter("livroSubtitulo");
-                    String edicao = request.getParameter("livroEdicao");
-                    String autor = request.getParameter("livroAutor");
-                    String editora = request.getParameter("livroEditora");
-                    String datapublic = request.getParameter("livroDatapublic");
-                    
+                case "create":
                     livro = new Livro(titulo, subtitulo, edicao, autor, editora, formatDate.parse(datapublic));
                     result = dao.create(livro);
-                }
+                    break;
+                case "update":
+                    livro = new Livro(ID, titulo, subtitulo, edicao, autor, editora, formatDate.parse(datapublic));
+                    result = dao.update(livro);
+                    break;
             }
             
             if(result) {

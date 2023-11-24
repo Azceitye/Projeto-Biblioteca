@@ -44,11 +44,11 @@ public class AutorDao {
     }
 
     public Autor buscar(String nome) {
-        String sql = "SELECT `ID_AUTOR`, `nome_AUTOR` FROM `tb_autor` WHERE `nome_AUTOR` = ?";
+        String sql = "SELECT `ID_AUTOR`, `nome_AUTOR` FROM `tb_autor` WHERE UPPER(`nome_AUTOR`) = ?";
         Autor autor = null;
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome);
+            stmt.setString(1, nome.toUpperCase());
             ResultSet rs = stmt.executeQuery();
             
             if(rs.first()) {

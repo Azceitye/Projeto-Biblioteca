@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.bean.Estante;
 import model.bean.Exemplar;
 
 public class ExemplarDao {
@@ -20,10 +21,11 @@ public class ExemplarDao {
     }
     
     public boolean create(Exemplar exemplar) {
-        String sql = "INSERT INTO `tb_exemplar`(`ISBN_EXEMPLAR`, `tb_ESTANTE_ID_ESTANTE`, `tb_LIVRO_ID_LIVRO`, `status_LIVRO`) VALUES (?,?,?,?')";
+        String sql = "INSERT INTO `tb_exemplar`(`ISBN_EXEMPLAR`, `tb_ESTANTE_ID_ESTANTE`, `tb_LIVRO_ID_LIVRO`, `status_LIVRO`) VALUES (?,?,?,?)";
         boolean sucess=false;
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
             stmt.setString(1, exemplar.getISBN());
             stmt.setLong(2, exemplar.getEstanteID());
             stmt.setLong(3, exemplar.getLivroID());

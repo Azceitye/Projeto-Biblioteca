@@ -42,11 +42,11 @@ public class EditoraDao {
     }
     
     public Editora buscar(String nome) {
-        String sql = "SELECT `ID_EDITOR`, `nome_EDITOR` FROM `tb_editor` WHERE `nome_EDITOR` = ?";
+        String sql = "SELECT `ID_EDITOR`, `nome_EDITOR` FROM `tb_editor` WHERE UPPER(`nome_EDITOR`) = ?";
         Editora edit = null;
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome);
+            stmt.setString(1, nome.toUpperCase());
             ResultSet rs = stmt.executeQuery();
             
             if(rs.first()) {

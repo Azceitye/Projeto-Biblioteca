@@ -45,13 +45,13 @@ public class EstanteLogic extends HttpServlet {
             boolean result = false;
             
             switch(action) {
-                case "create" -> {
+                case "create":
                     long estanteID = Long.parseLong(request.getParameter("conjuntoEstante"));
                     String local = request.getParameter("localEstante");
                     
                     estante = new Estante(estanteID, local);
                     result = dao.create(estante);
-                }
+                    break;
             }
             
             if(result) {

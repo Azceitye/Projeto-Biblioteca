@@ -5,8 +5,10 @@
 package logica;
 
 import dao.ExemplarDao;
+import dao.LivroDao;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -29,23 +31,27 @@ public class ExemplarLogic extends HttpServlet {
         
         String action = request.getParameter("action");
         try {
-            ExemplarDao dao = new ExemplarDao(new ConnectionFactory().getConnection());
-            Exemplar exemplar = null;
+            final Connection conn = new ConnectionFactory().getConnection();
+            ExemplarDao dao = new ExemplarDao(conn);
+            LivroDao daoLivro = new LivroDao(conn);
             boolean result = false;
             
+            Exemplar exemplar = null;
+            long livroID = Long.parseLong(request.getParameter("livroIDExemplar"));
+            String ISBN = request.getParameter("isbnExemplar");
+            long estante = Long.parseLong(request.getParameter("estanteExemplar"));
+            String status = request.getParameter("statusExemplar");
+            
+            
+            
             switch(action) {
-                case "create" -> {
-                    long livroID = Long.parseLong(request.getParameter("livroIDExemplar"));
-                    String ISBN = request.getParameter("isbnExemplar");
-                    
-                    long estante = Long.parseLong(request.getParameter("estanteExemplar"));
-        
-                    String status = request.getParameter("statusExemplar");
-                    
-                    
-                    exemplar = new Exemplar(ISBN, estante, livroID, status);
-                    result = dao.create(exemplar);
-                }
+                case "create":
+                    if(daoLivro.buscar(livroID) != null) {
+                        System.out.println(estante);
+                        exemplar = new Exemplar(ISBN, estante, livroID, status);
+                        result = dao.create(exemplar);
+                    }
+                    break;
             }
             
             if(result) {
