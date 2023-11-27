@@ -13,7 +13,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Lista de Livros</title>
     </head>
     <body>
         <table border="1">
@@ -25,6 +25,9 @@
                 <th>Autor</th>
                 <th>Editora</th>
                 <th>Data de Publicação</th>
+                <th></th>
+                <th></th>
+                <th colspan="2">Exemplares</th>
             </tr>
             <c:forEach var="livro" items="${dao.lista}">
                 <tr>
@@ -37,7 +40,8 @@
                     <td><fmt:formatDate value="${livro.datapublic}" pattern="dd/MM/yyyy" /></td>
                     <td><a href="alterar-livro.jsp?id=${livro.ID}">EDITAR</a></td>
                     <td><a href="#">EXCLUIR</a></td>
-                    <td><a href="../exemplar/adicionar-exemplar.jsp?livro=${livro.ID}">Adicionar Exemplar</a></td>
+                    <td><a href="../exemplar/listar-exemplar.jsp?livro=${livro.ID}">Exemplares</a></td>
+                    <td><a href="../exemplar/adicionar-exemplar.jsp?livro=${livro.ID}">+</a></td>
                 </tr>        
             </c:forEach>
         </table>

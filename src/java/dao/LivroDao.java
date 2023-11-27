@@ -140,4 +140,18 @@ public class LivroDao {
         return result;
     }
     
+    public void delete(long id) {
+        String sql = "DELETE FROM `tb_livro` WHERE `ID_LIVRO` = ? AND NOT EXISTS (SELECT 1 FROM `tb_exemplar` WHERE `tb_LIVRO_ID_LIVRO` = ?)";
+        
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.setLong(2, id);
+            stmt.execute();
+            
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ExemplarDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }

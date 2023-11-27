@@ -4,11 +4,11 @@
  */
 package logica;
 
-import dao.ExemplarDao;
-import dao.LivroDao;
+import dao.ClienteDao;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Connection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -17,61 +17,46 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ConnectionFactory;
-import model.bean.Exemplar;
+import model.bean.Cliente;
 
 
-public class ExemplarLogic extends HttpServlet {
+public class ClienteLogic extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        long result=0;
         String action = request.getParameter("action");
         try {
-            final Connection conn = new ConnectionFactory().getConnection();
-            ExemplarDao dao = new ExemplarDao(conn);
-            LivroDao daoLivro = new LivroDao(conn);
-            boolean result = false;
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            ClienteDao dao = new ClienteDao(new ConnectionFactory().getConnection());
+            Cliente cliente = null;
             
-            Exemplar exemplar = null;
-            
-            String LivroIDSTR = request.getParameter("livroIDExemplar");
-            Long livroID = null;
-            if(LivroIDSTR != null) livroID = Long.valueOf(LivroIDSTR);
-            
-            String ISBN = request.getParameter("isbnExemplar");
-            
-            String status = request.getParameter("statusExemplar");
-            String estanteSTR = request.getParameter("estanteExemplar");
-            Long estante=null;
-            if(estanteSTR != null) {
-                estante = Long.valueOf(estanteSTR);
-            }
+            String nome = request.getParameter("clienteNome");
+            String datanasc = request.getParameter("clienteDatenasc");
             
             switch(action) {
                 case "create":
-                    exemplar = new Exemplar(ISBN, estante, livroID, status);
-                    if(daoLivro.buscar(livroID) != null) {
-                        result = dao.create(exemplar);
-                    }
+                    cliente = new Cliente(nome, formatDate.parse( datanasc));
+                    result = dao.create(cliente);
                     break;
                 case "update":
-                    exemplar = new Exemplar(ISBN, estante, livroID, status);
-                    String oldisbn = request.getParameter("oldisbn");
-                    result = dao.update(oldisbn, exemplar);
+                    long ID = Long.parseLong(request.getParameter("clienteID"));
+                    cliente = new Cliente(ID, nome, formatDate.parse( datanasc));
+                    result = dao.update(cliente) ? 1 : 0;
                     break;
-                case "delete":
-                    result = dao.delete(ISBN, livroID);
-                    break;                    
-            }
-            
-            if(result) {
-                RequestDispatcher rd = request.getRequestDispatcher("/exemplar/listar-exemplar.jsp?livro=" + livroID);
-                rd.forward(request,response);
             }
         } catch (SQLException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(ClienteLogic.class.getName()).log(Level.SEVERE, null, ex);
         } 
+        
+        if(result>0) {
+            RequestDispatcher rd = request.getRequestDispatcher("/cliente/perfil-cliente.jsp?id=" + result);
+            rd.forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

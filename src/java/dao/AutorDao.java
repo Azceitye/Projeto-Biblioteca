@@ -63,4 +63,27 @@ public class AutorDao {
         
         return autor;
     }
+    
+    public void delete(long id) {
+        String sql = "SELECT `nome_AUTOR` FROM `tb_autor` LEFT JOIN `tb_livro` ON `ID_AUTOR` = `tb_autor_ID_AUTOR` WHERE `ID_AUTOR` = 1";
+        
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            
+            if(!rs.first()) {
+                String dsql = "DELETE FROM `tb_autor` WHERE `ID_AUTOR` = ?";
+                try(PreparedStatement dstmt = conn.prepareStatement(dsql)) {
+                    dstmt.setLong(1, id);
+                    dstmt.execute();
+                    
+                    dstmt.close();
+                }
+            }
+            
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ExemplarDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

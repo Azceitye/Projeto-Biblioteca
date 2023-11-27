@@ -1,49 +1,50 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="dao.EstanteDao"%>
 <%@page import="java.util.List"%>
 <%@page import="model.bean.Estante"%>
-<%@page import="dao.EstanteDao"%>
-<%@page import="dao.ExemplarDao"%>
-<%@page import="java.sql.Connection"%>
-<%@page import="model.bean.Livro"%>
-<%@page import="model.ConnectionFactory"%>
 <%@page import="dao.LivroDao"%>
+<%@page import="model.bean.Livro"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="model.ConnectionFactory"%>
+<%@page import="model.bean.Exemplar"%>
+<%@page import="dao.ExemplarDao"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Adicionar Exemplar</title>
+        <title>Alterar Exemplar</title>
     </head>
     <body>
         <% 
+            String isbn = request.getParameter("exemplar");
             Connection conn = new ConnectionFactory().getConnection();
-            long livroID = Long.parseLong(request.getParameter("livro"));
+            Exemplar exemplar = new ExemplarDao(conn).buscar(isbn);       
             
-            Livro livro = new LivroDao(conn).buscar(livroID);
+            List<String> status = new ArrayList<>();
+            status.add("Disponivel");
+            status.add("Indisponivel");
+            status.remove(exemplar.getStatus());
+            
+            
             List<Estante> estantes = new EstanteDao(conn).list();
-            
-            
-            String livroNome = livro.getTitulo() + (livro.getSubtitulo() != null ? " : " + livro.getSubtitulo() : "");
-            livroNome += " por " + livro.getAutor();
-            
+            estantes.remove(exemplar.getEstanteID());
             if(!estantes.isEmpty()) {
         %>
             <form method="post" action="../ExemplarLogic">
-                <input type="hidden" name="action" value="create"/>
-                <!-- Livro(Titulo, Subtitulo, Autor) -->
-                <div>
-                    <input type="hidden" value="<%=livroID%>" name="livroIDExemplar">
-                    <label for="livroNome">Titulo do Livro</label>
-                    <input type="text" value="<%=livroNome%>" name="livroNome" disabled>
-                </div>
+                <input type="hidden" name="action" value="update"/>
+                <input type="hidden" value="<%=exemplar.getLivroID()%>" name="livroIDExemplar">
                 <!-- ISBN -->
                 <div>
+                    <input type="hidden" value="<%=exemplar.getISBN()%>" name="oldisbn">
                     <label for="isbnExemplar">ISBN</label>
-                    <input type="text" name="isbnExemplar" required>
+                    <input type="text" value="<%=exemplar.getISBN()%>" name="isbnExemplar" required>
                 </div>
                 <!-- Estante -->
                 <div>
                     <label for="estanteExemplar">Estante</label>
                     <select name="estanteExemplar">
+                        <option value="<%=exemplar.getEstanteID()%>"><%=exemplar.getEstanteID()%></option>
                         <%for(Estante estante : estantes) { %>
                             <option value="<%=estante.getID()%>"><%=estante.getID()%></option>
                         <% } %>
@@ -53,14 +54,16 @@
                 <div>
                     <label for="statusExemplar">Status</label>
                     <select name="statusExemplar">
-                        <option>Disponivel</option>
-                        <option>Indisponivel</option>
+                        <option value="<%=exemplar.getStatus()%>"><%=exemplar.getStatus()%></option>
+                        <% for(String stat : status) { %>
+                            <option value="<%=stat%>"><%=stat%></option>
+                        <% } %>
                     </select>
                 </div>
                 <div>
                     <button type="submit">Registrar</button>
                 </div>
-            </form>
+            </form>        
         <% } else { %>
             <div>
                 <p>Antes, registre uma estante para colocar os Exemplares: <a href="../estante/adicionar-estante.jsp">AQUI</a></p>

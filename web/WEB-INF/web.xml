@@ -12,6 +12,18 @@
         <servlet-name>EstanteLogic</servlet-name>
         <servlet-class>logica.EstanteLogic</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ClienteLogic</servlet-name>
+        <servlet-class>logica.ClienteLogic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BibliotecariaLogic</servlet-name>
+        <servlet-class>logica.BibliotecariaLogic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmprestimoLogic</servlet-name>
+        <servlet-class>logica.EmprestimoLogic</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LivroLogic</servlet-name>
         <url-pattern>/LivroLogic</url-pattern>
@@ -23,6 +35,18 @@
     <servlet-mapping>
         <servlet-name>EstanteLogic</servlet-name>
         <url-pattern>/EstanteLogic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClienteLogic</servlet-name>
+        <url-pattern>/ClienteLogic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BibliotecariaLogic</servlet-name>
+        <url-pattern>/BibliotecariaLogic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmprestimoLogic</servlet-name>
+        <url-pattern>/EmprestimoLogic</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

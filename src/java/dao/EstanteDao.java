@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.bean.Estante;
@@ -17,6 +19,15 @@ public class EstanteDao {
     public EstanteDao(Connection conn) {
         this.conn = conn;
     }
+
+    public EstanteDao() {
+    }
+    
+    public void setConn(Connection conn) {
+        this.conn = conn;
+    }
+    
+    
     
     
     public void createConjunto(long id) {
@@ -30,14 +41,38 @@ public class EstanteDao {
         }
     }
     
-    public boolean buscarConjunto(long id) {
-        String sql = "SELECT `ID_CONJUNTO` FROM `tb_conjunto` WHERE `ID_CONJUNTO` = ? ";
-        boolean conjunto=false;
+    public String buscarConjunto(long id) {
+        String sql = "SELECT `ID_CONJUNTO`, `nome_CATEGORIAS` FROM `tb_conjunto` LEFT JOIN `tb_categorias` ON `tb_CATEGORIAS_ID_CATEGORIAS` = `ID_CATEGORIAS` WHERE `ID_CONJUNTO` = ?";
+        String conjCategorias=null;
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
-            if(rs.first()) conjunto = true;
+            if(rs.first()) {
+                conjCategorias = rs.getString("nome_CATEGORIAS");
+            } else {
+                return null;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EstanteDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return conjCategorias;
+    }
+    
+    
+    public Map<Long, String> listarConjunto() {
+        String sql = "SELECT `ID_CONJUNTO`, `nome_CATEGORIAS` FROM `tb_conjunto` LEFT JOIN `tb_categorias` ON `tb_CATEGORIAS_ID_CATEGORIAS` = `ID_CATEGORIAS`";
+        Map<Long, String> conjunto = new HashMap<>();
+        
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()){
+                conjunto.put(rs.getLong("ID_CONJUNTO"), rs.getString("nome_CATEGORIAS"));
+            }
+            
+            stmt.close();
         } catch (SQLException ex) {
             Logger.getLogger(EstanteDao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -46,14 +81,13 @@ public class EstanteDao {
     }
     
     
-    
     public boolean create(Estante estante) {
         String sql = "INSERT INTO `tb_estante`(`tb_CONJUNTO_ID_CONJUNTO`, `desclocal_ESTANTE`) VALUES (?,?)";
         boolean sucess=false;
               
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
-            boolean isconj = buscarConjunto(estante.getConjuntoID());
+            boolean isconj = buscarConjunto(estante.getConjuntoID()) != null;
             if(!isconj) createConjunto(estante.getConjuntoID());
             
             stmt.setLong(1, estante.getConjuntoID());
@@ -112,5 +146,24 @@ public class EstanteDao {
         }
         
         return lista;
+    }
+    
+    
+    public boolean update(Estante estante) {
+        String sql = "UPDATE `tb_estante` SET `tb_CONJUNTO_ID_CONJUNTO`=?,`desclocal_ESTANTE`=? WHERE `ID_ESTANTE` = ?";
+        boolean result=false;
+        
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, estante.getConjuntoID());
+            stmt.setString(2, estante.getLocal());
+            stmt.setLong(3, estante.getID());
+            
+            result = stmt.executeUpdate() > 0;
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(EstanteDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
     }
 }

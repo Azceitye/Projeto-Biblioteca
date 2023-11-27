@@ -5,12 +5,8 @@
 package logica;
 
 import dao.EstanteDao;
-import dao.LivroDao;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -20,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ConnectionFactory;
 import model.bean.Estante;
-import model.bean.Livro;
 
 
 public class EstanteLogic extends HttpServlet {
@@ -44,13 +39,18 @@ public class EstanteLogic extends HttpServlet {
             Estante estante = null;
             boolean result = false;
             
+            long conjuntoID = Long.parseLong(request.getParameter("conjuntoEstante"));
+            String local = request.getParameter("localEstante");
+            
             switch(action) {
                 case "create":
-                    long estanteID = Long.parseLong(request.getParameter("conjuntoEstante"));
-                    String local = request.getParameter("localEstante");
-                    
-                    estante = new Estante(estanteID, local);
+                    estante = new Estante(conjuntoID, local);
                     result = dao.create(estante);
+                    break;
+                case "update":
+                    long ID = Long.parseLong(request.getParameter("IDEstante"));
+                    estante = new Estante(ID, conjuntoID, local);
+                    result = dao.update(estante);
                     break;
             }
             
